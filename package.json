@@ -26,6 +26,8 @@
     "zustand": "^4.4.6"
   },
   "devDependencies": {
+    "@commitlint/cli": "^18.4.3",
+    "@commitlint/config-conventional": "^18.4.3",
     "@emotion/babel-plugin": "^11.11.0",
     "@types/crypto-js": "^4.2.1",
     "@types/lodash": "^4.14.201",
