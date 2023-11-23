@@ -8,7 +8,7 @@ import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   UserOutlined,
-} from '@ant-design/icons'
+} from '@ant-design/icon'
 import type { MenuProps } from 'antd'
 
 import { Link } from 'react-router-dom'
