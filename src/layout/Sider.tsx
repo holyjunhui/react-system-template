@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 
 import { Layout, Menu, MenuProps } from 'antd'
 import { useLocation, useNavigate } from 'react-router-dom'
+import lodash from 'lodash'
 import Logo from '@/assets/images/logo_white.png'
 
 // import { menusRouterList, level1Path } from '@/router/config'
@@ -24,13 +25,19 @@ const Sider = ({ routerLists }: any) => {
     return routerList
       .filter((item: any) => !item.hidden)
       .map((item: any) => {
+        const { path } = item
+
         if (item.children) {
           item.level = level
-          if (item.children && level === LEVEL) {
-            item.path = item?.children?.find((child: any) => !child.authHidden)?.path
+          // 只有二级菜单有isTab属性时，说明有tabs组件，path为children中第一个的path
+          if (item.children && level === LEVEL && item.isTab) {
+            // eslint-disable-next-line no-unsafe-optional-chaining
+            const path = `${item?.children?.find((child: any) => !child.authHidden)?.path}`
+            item.direct = path
           }
           item.children = hiddenRouterList(item.children, level + 1)
         }
+
         if (level === 1) {
           level1Path.add(item.path)
         }
@@ -40,28 +47,35 @@ const Sider = ({ routerLists }: any) => {
           children: item.children?.length ? item.children : null,
           icon: item.icon,
           label: item.title,
-          key: item.path,
+          direct: item.direct,
+          key: path,
         }
       })
   }, [])
 
-  const onMenuClick: MenuProps['onClick'] = ({ key }) => {
+  const onMenuClick = ({ key, item }: any) => {
+    if (item?.props?.direct && item?.props?.level === LEVEL) {
+      navigate(item?.props?.direct)
+      return
+    }
     navigate(key)
   }
 
   useEffect(() => {
-    const menusRouterList = hiddenRouterList(routerLists)
-    // console.log(menusRouterList, 'menusRouterList')
-    setMenusList(menusRouterList)
-  }, [hiddenRouterList, routerLists])
+    const newRouterLists = lodash.cloneDeep(routerLists)
+    const menusRouterList = hiddenRouterList(newRouterLists)
 
-  useEffect(() => {
+    setMenusList(menusRouterList)
     const currentPath = location.pathname
+    // 对currentPath进行处理，如果是二级菜单，只取前两段
+    const currentPathArr = currentPath.split('/').slice(0, 3).join('/')
+
+    // 当前路径的一级菜单是否包含在level1Path中
     const currentOpenKeys = [...level1Path].filter((path) => currentPath.includes(path as string))
-    // currentPath的一段数据是否包含在level1Path中
-    setSelectedKeys([currentPath])
+
+    setSelectedKeys([currentPathArr])
     setOpenKeys(currentOpenKeys as string[])
-  }, [location.pathname, collapsed])
+  }, [hiddenRouterList, location.pathname, routerLists, collapsed])
 
   return (
     <Layout.Sider

@@ -1,15 +1,11 @@
 import React, { FunctionComponent, useEffect, useState } from 'react'
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import { RouterProps } from './index.interface'
 
-const UnAuth = () => {
-  return <div>无权限</div>
-}
 const AuthRoute = ({ authRouterList }: { authRouterList: RouterProps[] }) => {
   const [authRouter, setAuthRouter] = useState<RouterProps[]>([])
 
   const token = localStorage.getItem('token')
-
   useEffect(() => {
     setAuthRouter(authRouterList)
   }, [authRouterList])
@@ -31,7 +27,7 @@ const AuthRoute = ({ authRouterList }: { authRouterList: RouterProps[] }) => {
   }
   return (
     <Routes>
-      <Route path="*" element={<UnAuth />} />
+      <Route path="*" element={<Navigate replace to="/" />} />
     </Routes>
   )
 }

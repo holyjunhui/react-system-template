@@ -2,6 +2,7 @@
 import { create } from 'zustand'
 import { devtools, persist, createJSONStorage } from 'zustand/middleware'
 import { getUserInfo } from '@/api/common'
+import { MenuProps } from '@/router/index.interface'
 
 type UserState = {
   nickname: string
@@ -11,10 +12,12 @@ type UserState = {
     [key: string]: string
   }
   permissions: string[]
+  authRouters: MenuProps[]
   collapsed: boolean
   setToken: (token: string) => void
   setPermissions: (permissions: string[]) => void
   setCollapsed: (collapsed: boolean) => void
+  setAuthRouters: (authRouters: MenuProps[]) => void
   fetchUserInfo: () => void
 }
 
@@ -26,9 +29,11 @@ const useUserStore = create<UserState>()(
       token: '',
       userInfo: {},
       permissions: [],
+      authRouters: [],
       collapsed: false,
       setToken: (token) => set({ token }),
       setPermissions: (permissions) => set({ permissions }),
+      setAuthRouters: (authRouters) => set({ authRouters }),
       setCollapsed: (collapsed) => set({ collapsed }),
       fetchUserInfo: () => {
         return getUserInfo().then((res: any) => {
