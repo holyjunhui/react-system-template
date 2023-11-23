@@ -1,6 +1,7 @@
 import React, { FunctionComponent, useEffect, useState } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { RouterProps } from './index.interface'
+import NotFound from '@/pages/errorPages/404'
 
 const AuthRoute = ({ authRouterList }: { authRouterList: RouterProps[] }) => {
   const [authRouter, setAuthRouter] = useState<RouterProps[]>([])
@@ -22,6 +23,7 @@ const AuthRoute = ({ authRouterList }: { authRouterList: RouterProps[] }) => {
             />
           )
         })}
+        <Route path="*" element={<NotFound />} />
       </Routes>
     )
   }

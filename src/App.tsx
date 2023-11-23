@@ -4,14 +4,15 @@ import { ConfigProvider, message, App } from 'antd'
 import dayjs from 'dayjs'
 import 'dayjs/locale/zh-cn'
 import zhCN from 'antd/locale/zh_CN'
-
+import { Global } from '@emotion/react'
 import { Routes, Route } from 'react-router-dom'
+import global from '@/assets/styles/global'
+
 import { whiteRouterList } from './router/index'
-import About from '@/pages/about'
 import Login from '@/pages/login/login'
 import Layout from './layout/Index'
 import useUserStore from './store/user'
-import './assets/style/tailwind.css'
+import './assets/styles/tailwind.css'
 
 dayjs.locale('zh-cn')
 
@@ -35,6 +36,8 @@ const MainApp = () => {
       }}
     >
       <App>
+        {/* 全局样式 */}
+        <Global styles={global} />
         <Routes>
           <Route path="/" element={<Login />} />
           {whiteRouterList.map(({ path, element }) => {

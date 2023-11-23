@@ -3,6 +3,8 @@ import { resolve } from 'path'
 import react from '@vitejs/plugin-react'
 import checker from 'vite-plugin-checker'
 import eslint from 'vite-plugin-eslint'
+import svgr from 'vite-plugin-svgr'
+
 // import eslint from 'vite-plugin-eslint'
 // https://vitejs.dev/config/
 
@@ -12,6 +14,7 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
 
   return {
+    base: './',
     server: {
       port: 9527,
       proxy: {
@@ -38,6 +41,8 @@ export default defineConfig(({ mode }) => {
           plugins: ['@emotion/babel-plugin'],
         },
       }),
+      svgr(),
+
       eslint(),
       checker({
         typescript: true,
