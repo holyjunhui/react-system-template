@@ -3,6 +3,7 @@ import React from 'react'
 type MenuProps = {
   title: string
   path: string
+  breadcrumb?: string // 面包屑名称 一般跟title一样
   key?: string // 跟path一样 不需要写，但是需要唯一
   element?: React.FC
   icon?: React.ReactNode

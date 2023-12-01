@@ -1,7 +1,8 @@
 import React, { useCallback, useEffect, useMemo } from 'react'
-import { Layout } from 'antd'
+import { Breadcrumb, Layout } from 'antd'
 import { css } from '@emotion/react'
 import lodash from 'lodash'
+import { useLocation } from 'react-router-dom'
 import Header from './Header'
 import Sider from './Sider'
 import AuthRoute from '../router/authRoute'
@@ -11,6 +12,7 @@ import { MenuProps } from '@/router/index.interface'
 import useUserStore from '@/store/user'
 
 const Index = () => {
+  const location = useLocation()
   const flatRouterList: MenuProps[] = useMemo(() => [...basicRouterList, ...whiteRouterList], [])
 
   const collapsed = useUserStore((state) => state.collapsed)
@@ -27,13 +29,15 @@ const Index = () => {
    * 4. 把所有的有权限且有组件的子路由放到flatRouterList中，用于渲染路由，根据permissions动态渲染路由
    */
   const flatRouterFun = useCallback(
-    (routerList: MenuProps[]) => {
+    (routerList: MenuProps[], parentTitle = '') => {
       // authHidden为计算所得，外层的authHdden为子路由的authHidden的与运算
       return routerList.map((item) => {
-        const { path, auth, children } = item
+        const { path, auth, children, title } = item
+        const breadcrumb = parentTitle ? `${parentTitle} | ${title}` : title
+        item.breadcrumb = breadcrumb
 
         if (children) {
-          item.children = flatRouterFun(children)
+          item.children = flatRouterFun(children, breadcrumb)
           // 父节点的authHidden为子节点的authHidden的与运算
           item.authHidden = children.every((child) => child.authHidden)
         }
@@ -60,6 +64,13 @@ const Index = () => {
     [flatRouterList, permissions]
   )
 
+  const makeBread = useCallback(() => {
+    const pathname = location?.pathname
+    const breadcrumbItem = flatRouterList.find((item: any) => item?.path === pathname)
+    const breadMap = breadcrumbItem?.breadcrumb?.split('|') || []
+    return breadMap.map((item: string) => ({ title: item }))
+  }, [flatRouterList, location?.pathname])
+
   useEffect(() => {
     // 重置flatRouterList，否则会重复push
     flatRouterList.length = 0
@@ -69,45 +80,59 @@ const Index = () => {
 
     const routerLists = flatRouterFun(newFilterMenu)
     setAuthRouters(flatRouterList)
-    // const routerLists = lodash.cloneDeep(newRouterLists)
 
-    console.log(flatRouterList, routerLists, 'flatRouterList')
     setRouterLists(routerLists)
   }, [flatRouterFun, flatRouterList, setAuthRouters])
 
   return (
     <Layout>
-      {/* 侧边栏占位 */}
-      <div
-        css={css`
-          width: ${collapsed ? '80px' : '200px'};
-          height: 100vh;
-          overflow: hidden;
-          flex: 0 0 ${collapsed ? '80px' : '200px'};
-          transition: all 0.2s;
-        `}
-      />
       {/* 侧边栏 */}
       <Sider routerLists={routerLists} />
-      <Layout>
+
+      <Layout.Content
+        css={css`
+          position: relative;
+          margin-left: ${collapsed ? '80px' : '200px'};
+          flex: auto;
+          height: 100vh;
+
+          transition: all 0.2s;
+        `}
+      >
         <Header />
-        <Layout.Content
-          style={{
-            margin: '24px 20px',
-            minHeight: 280,
-            // background: 'red',
-          }}
-        >
+
+        {makeBread().length > 0 && (
           <div
             css={css`
               background: #fff;
-              padding: 14px 20px;
+              padding: 5px 20px;
+              position: relative;
+              z-index: 99;
+              width: 100%;
+              color: #7b869e;
+              font-size: 14px;
+              border-top: 1px solid #ebedf0;
             `}
           >
-            <AuthRoute authRouterList={flatRouterList} />
+            <Breadcrumb
+              css={css`
+                margin-bottom: 0;
+              `}
+              items={makeBread()}
+            />
           </div>
-        </Layout.Content>
-      </Layout>
+        )}
+
+        <div
+          css={css`
+            background: #fff;
+            margin: 20px;
+            padding: 14px 20px;
+          `}
+        >
+          <AuthRoute authRouterList={flatRouterList} />
+        </div>
+      </Layout.Content>
     </Layout>
   )
 }

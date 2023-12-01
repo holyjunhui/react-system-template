@@ -45,6 +45,10 @@ module.exports = {
     "react/function-component-definition": ['error', {
       "namedComponents": ["function-declaration", "function-expression", "arrow-function"],
     }],
+    "camelcase": ["off", { properties: "never" }],
+    'prefer-promise-reject-errors': 'off', // Promise.reject("error")
+    'react/require-default-props': 'off',
+    'no-plusplus': 'off', // i++ error
     "jsx-a11y/label-has-associated-control": ['error', {
       "labelComponents": ["CustomInputLabel"],
       "labelAttributes": ["label"],

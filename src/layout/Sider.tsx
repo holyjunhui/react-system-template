@@ -1,9 +1,8 @@
 import React, { useCallback, useEffect, useState } from 'react'
-
+import { css } from '@emotion/react'
 import { Layout, Menu, MenuProps } from 'antd'
 import { useLocation, useNavigate } from 'react-router-dom'
 import lodash from 'lodash'
-import Logo from '@/assets/images/logo_white.png'
 
 // import { menusRouterList, level1Path } from '@/router/config'
 import useUserStore from '@/store/user'
@@ -31,7 +30,6 @@ const Sider = ({ routerLists }: any) => {
           item.level = level
           // 只有二级菜单有isTab属性时，说明有tabs组件，path为children中第一个的path
           if (item.children && level === LEVEL && item.isTab) {
-            // eslint-disable-next-line no-unsafe-optional-chaining
             const path = `${item?.children?.find((child: any) => !child.authHidden)?.path}`
             item.direct = path
           }
@@ -91,8 +89,19 @@ const Sider = ({ routerLists }: any) => {
       collapsible
       collapsed={collapsed}
     >
-      <div className="demo-logo-vertical border-b-2 border-b-red-400 h-16">
-        <img src={Logo} alt="logo" />
+      <div
+        css={css`
+          color: #fff;
+          font-size: 30px;
+          text-align: center;
+          height: 56px;
+          line-height: 56px;
+          background-color: #171e26;
+          width: ${collapsed ? '80px' : '200px'};
+          cursor: pointer;
+        `}
+      >
+        {collapsed ? 'R' : 'React-System'}
       </div>
       <Menu
         onClick={onMenuClick}

@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import { ConfigProvider, message, App } from 'antd'
+import React, { useEffect } from 'react'
+import { ConfigProvider, App } from 'antd'
 // 由于 antd 组件的默认文案是英文，所以需要修改为中文
 import dayjs from 'dayjs'
 import 'dayjs/locale/zh-cn'
@@ -19,7 +19,6 @@ dayjs.locale('zh-cn')
 const MainApp = () => {
   const fetchUserInfo = useUserStore((state) => state.fetchUserInfo)
   const token = localStorage.getItem('token') as string
-  console.log('token', token)
   useEffect(() => {
     if (token) {
       fetchUserInfo()

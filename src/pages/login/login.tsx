@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback, useMemo } from 'react'
 
 import { Form, Input, Button, Row, Col } from 'antd'
 import { UserOutlined, LockOutlined } from '@ant-design/icons'
@@ -8,8 +8,11 @@ import { css } from '@emotion/react'
 import { login, getCaptcha } from '@/api/common'
 import useUserStore from '@/store/user'
 import { encrypt } from '@/utils/encrypt'
+import { User } from '@/newApi/User'
 
 const Login = () => {
+  const UserApi = useMemo(() => new User(), [])
+
   const navigate = useNavigate()
   const fetchUserInfo = useUserStore((state) => state.fetchUserInfo)
 
@@ -25,7 +28,7 @@ const Login = () => {
     data.username = data.username.replace(/\s/g, '')
     setLoading(true)
     try {
-      const res: any = await login(data)
+      const res: any = await UserApi.loginCreate(data)
       localStorage.setItem('token', res.accessToken)
 
       // 先行获取，不会出现白屏，后续需要再获取
@@ -40,15 +43,15 @@ const Login = () => {
       setLoading(false)
     }
   }
-  const fetchCaptcha = async () => {
-    getCaptcha().then((res) => {
+  const fetchCaptcha = useCallback(() => {
+    UserApi.captchaList().then((res) => {
       setCaptcha(res as any)
     })
-  }
+  }, [UserApi])
 
   React.useEffect(() => {
     fetchCaptcha()
-  }, [])
+  }, [fetchCaptcha])
 
   return (
     <div className="flex items-center justify-center h-screen">
