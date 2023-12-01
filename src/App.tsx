@@ -6,7 +6,7 @@ import 'dayjs/locale/zh-cn'
 import zhCN from 'antd/locale/zh_CN'
 import { Global } from '@emotion/react'
 import { Routes, Route } from 'react-router-dom'
-import global from '@/assets/styles/global'
+import index from '@/assets/styles'
 
 import { whiteRouterList } from './router/index'
 import Login from '@/pages/login/login'
@@ -36,7 +36,7 @@ const MainApp = () => {
     >
       <App>
         {/* 全局样式 */}
-        <Global styles={global} />
+        <Global styles={index} />
         <Routes>
           <Route path="/" element={<Login />} />
           {whiteRouterList.map(({ path, element }) => {

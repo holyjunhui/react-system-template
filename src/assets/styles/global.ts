@@ -1,44 +1,18 @@
-import { css } from '@emotion/react'
-
-const global = css`
-  html,
-  body {
-    padding: 0;
-    margin: 0;
-    font-family:
-      -apple-system,
-      BlinkMacSystemFont,
-      Segoe UI,
-      Roboto,
-      Oxygen,
-      Ubuntu,
-      Cantarell,
-      Fira Sans,
-      Droid Sans,
-      Helvetica Neue,
-      sans-serif;
-  }
-  .customer {
-    color: red;
-  }
-  a {
-    color: inherit;
-    text-decoration: none;
-  }
-
-  * {
-    box-sizing: border-box;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    html {
-      color-scheme: dark;
-    }
-    body {
-      color: white;
-      background: black;
-    }
-  }
-`
-
-export default global
+const siderLayoutBg = '#212933'
+const siderFirstBg = '#191F26'
+// const siderLayoutBg = 'red'
+// const siderFirstBg = 'blue'
+const siderSelectedBg = '#00AB7A'
+const siderSelectedColor = '#fff'
+const siderSubmenuBg = 'blue'
+const systemColor = '#00AB7A'
+const logoBg = '#171E26'
+export {
+  siderLayoutBg,
+  siderFirstBg,
+  siderSelectedBg,
+  siderSelectedColor,
+  siderSubmenuBg,
+  systemColor,
+  logoBg,
+}

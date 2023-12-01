@@ -3,7 +3,15 @@ import { css } from '@emotion/react'
 import { Layout, Menu, MenuProps } from 'antd'
 import { useLocation, useNavigate } from 'react-router-dom'
 import lodash from 'lodash'
-
+import {
+  siderLayoutBg,
+  siderFirstBg,
+  siderSelectedBg,
+  siderSelectedColor,
+  siderSubmenuBg,
+  systemColor,
+  logoBg,
+} from '@/assets/styles/global.ts'
 // import { menusRouterList, level1Path } from '@/router/config'
 import useUserStore from '@/store/user'
 // import { RouterProps } from '@/router/index.interface'
@@ -77,14 +85,17 @@ const Sider = ({ routerLists }: any) => {
 
   return (
     <Layout.Sider
-      style={{
-        overflow: 'auto',
-        height: '100vh',
-        position: 'fixed',
-        left: 0,
-        top: 0,
-        bottom: 0,
-      }}
+      css={css`
+        &.ant-layout-sider {
+          background-color: ${siderLayoutBg};
+          overflow: auto;
+          height: 100vh;
+          position: fixed;
+          left: 0;
+          top: 0;
+          bottom: 0;
+        }
+      `}
       trigger={null}
       collapsible
       collapsed={collapsed}
@@ -96,7 +107,7 @@ const Sider = ({ routerLists }: any) => {
           text-align: center;
           height: 56px;
           line-height: 56px;
-          background-color: #171e26;
+          background-color: ${logoBg};
           width: ${collapsed ? '80px' : '200px'};
           cursor: pointer;
         `}
@@ -104,6 +115,49 @@ const Sider = ({ routerLists }: any) => {
         {collapsed ? 'R' : 'React-System'}
       </div>
       <Menu
+        css={css`
+          .ant-menu-item-selected {
+            background-color: ${siderSelectedBg};
+            border-radius: 0;
+            width: 100%;
+            &:hover {
+              background-color: ${siderSelectedBg};
+            }
+          }
+
+          // 一级区域文字
+          .ant-menu-submenu-active > .ant-menu-submenu-title {
+            color: ${siderSelectedColor};
+          }
+          // 二级区域
+          .ant-menu-submenu .ant-menu {
+            .ant-menu-item {
+              border-radius: 0;
+              margin: 0;
+              background: ${siderFirstBg};
+              width: 100%;
+              &.ant-menu-item-active {
+                background-color: ${siderFirstBg};
+                width: 100%;
+              }
+            }
+            .ant-menu-item-selected {
+              background-color: ${siderSelectedBg};
+              border-radius: 0;
+              width: 100%;
+              &:hover {
+                width: 100%;
+                background-color: ${siderSelectedBg};
+              }
+            }
+            .ant-menu-submenu-title {
+              margin: 0;
+              &:hover {
+                color: ${siderSelectedColor};
+              }
+            }
+          }
+        `}
         onClick={onMenuClick}
         theme="dark"
         mode="inline"
