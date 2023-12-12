@@ -8,10 +8,9 @@ import {
   siderFirstBg,
   siderSelectedBg,
   siderSelectedColor,
-  siderSubmenuBg,
-  systemColor,
   logoBg,
 } from '@/assets/styles/global.ts'
+import globalConfig from '@/config/config'
 // import { menusRouterList, level1Path } from '@/router/config'
 import useUserStore from '@/store/user'
 // import { RouterProps } from '@/router/index.interface'
@@ -112,16 +111,16 @@ const Sider = ({ routerLists }: any) => {
           cursor: pointer;
         `}
       >
-        {collapsed ? 'R' : 'React-System'}
+        {collapsed ? globalConfig.simpleLogoTitle : globalConfig.logoTitle}
       </div>
       <Menu
         css={css`
           .ant-menu-item-selected {
-            background-color: ${siderSelectedBg};
+            background-color: ${globalConfig.systemColor};
             border-radius: 0;
             width: 100%;
             &:hover {
-              background-color: ${siderSelectedBg};
+              background-color: ${globalConfig.systemColor};
             }
           }
 

@@ -7,6 +7,7 @@ import zhCN from 'antd/locale/zh_CN'
 import { Global } from '@emotion/react'
 import { Routes, Route } from 'react-router-dom'
 import index from '@/assets/styles'
+import globalConfig from '@/config/config'
 
 import { whiteRouterList } from './router/index'
 import Login from '@/pages/login/login'
@@ -30,7 +31,7 @@ const MainApp = () => {
       locale={zhCN}
       theme={{
         token: {
-          colorPrimary: '#3b7aff',
+          colorPrimary: globalConfig.systemColor,
         },
       }}
     >
