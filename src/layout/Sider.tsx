@@ -139,20 +139,20 @@ const Sider = ({ routerLists }: any) => {
                 background-color: ${siderFirstBg};
                 width: 100%;
               }
-            }
-            .ant-menu-item-selected {
-              background-color: ${siderSelectedBg};
-              border-radius: 0;
-              width: 100%;
-              &:hover {
-                width: 100%;
+              &.ant-menu-item-selected {
                 background-color: ${siderSelectedBg};
+                border-radius: 0;
+                width: 100%;
+                &:hover {
+                  width: 100%;
+                  background-color: ${siderSelectedBg};
+                }
               }
-            }
-            .ant-menu-submenu-title {
-              margin: 0;
-              &:hover {
-                color: ${siderSelectedColor};
+              &.ant-menu-submenu-title {
+                margin: 0;
+                &:hover {
+                  color: ${siderSelectedColor};
+                }
               }
             }
           }

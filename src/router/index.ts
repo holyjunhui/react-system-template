@@ -1,11 +1,21 @@
 import { createElement } from 'react'
-
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   UploadOutlined,
   UserOutlined,
 } from '@ant-design/icons'
+import {
+  Website,
+  CertApply,
+  CertList,
+  CertDetail,
+  AccountList,
+  AccountCenter,
+  Password,
+  CertRevoke,
+  CertDown,
+} from './components'
 import Tabs from '@/components/Tabs'
 import { MenuProps } from './index.interface'
 import About from '@/pages/about'
@@ -24,122 +34,96 @@ const basicRouterList: MenuProps[] = [
 ]
 const authRouterList: MenuProps[] = [
   {
-    path: '/table',
-    title: '表格',
-    element: About,
+    path: '/website',
+    title: '网站管理',
+    element: Website,
     icon: createElement(MenuUnfoldOutlined),
     auth: 'allAuth',
     hidden: false, // 是否在菜单中隐藏
   },
   {
-    title: '授权管理',
+    title: '证书管理',
     icon: createElement(MenuUnfoldOutlined),
-    path: '/dns-auth',
+    path: '/cert-manage',
     children: [
       {
-        title: '区管理',
-        auth: 'dns.dns_auth.authorize',
-        path: '/dns-auth/authorize',
-        element: About,
+        title: '证书申请',
+        auth: 'allAuth',
+        path: '/cert-manage/apply',
+        element: CertApply,
+      },
+      {
+        title: '证书列表',
+        auth: 'allAuth',
+        path: '/cert-manage/list',
+        element: CertList,
         children: [
           {
-            title: '区记录',
+            title: '证书详情',
             auth: 'dns.dns_auth.authRecord',
-            path: '/dns-auth/authorize/authRecord',
+            path: '/cert-manage/list/detail',
             hidden: true,
-            element: About,
+            element: CertDetail,
           },
         ],
       },
 
       {
-        title: '共享记录',
-        auth: 'dns.dns_auth.share',
-        path: '/dns-auth/share',
-        element: About,
+        title: '证书吊销',
+        auth: 'allAuth',
+        path: '/cert-manage/revoke',
+        element: CertList,
+        children: [
+          {
+            title: '证书详情',
+            auth: 'dns.dns_auth.authRecord',
+            path: '/cert-manage/revoke/detail',
+            hidden: true,
+            element: CertDetail,
+          },
+        ],
       },
+      {
+        title: '证书下载',
+        auth: 'allAuth',
+        path: '/cert-manage/down',
+        element: CertList,
+        children: [
+          {
+            title: '证书详情',
+            auth: 'dns.dns_auth.authRecord',
+            path: '/cert-manage/down/detail',
+            hidden: true,
+            element: CertDetail,
+          },
+        ],
+      },
+    ],
+  },
 
-      {
-        title: '记录搜索',
-        auth: 'dns.dns_auth.search',
-        path: '/dns-auth/search',
-        element: About,
-      },
-    ],
-  },
   {
-    path: '/white',
-    title: '白名单',
-    icon: createElement(UploadOutlined),
-    children: [
-      {
-        path: 'add',
-        title: '新增白名单',
-        element: About,
-        auth: '/white/whiteAdd',
-        hidden: true, // 是否在菜单中隐藏
-      },
-      {
-        path: 'update',
-        title: '更新白名单',
-        auth: '/white/whiteUpdate',
-        element: About,
-      },
-      {
-        path: 'delete',
-        title: '删除白名单',
-        auth: '/white/whiteDelete',
-        element: About,
-      },
-    ],
-  },
-  {
-    path: '/form',
-    title: '表单',
+    path: '/account',
+    title: '用户管理',
     icon: createElement(UserOutlined),
     children: [
       {
-        path: '/form/add',
-        title: '添加表单',
-        element: Form,
+        path: '/account/list',
+        title: '用户列表',
+        element: AccountList,
         auth: 'allAuth',
-        hidden: false, // 是否在菜单中隐藏
       },
       {
-        title: '服务',
+        title: '密码更新',
         auth: 'allAuth',
-        element: Form,
-        path: '/form/serverSwitch',
-        children: [
-          {
-            title: '服务详情',
-            auth: 'allAuth',
-            path: '/form/serverSwitch/service',
-            hidden: true,
-            element: About,
-          },
-        ],
+        element: AccountCenter,
+        path: '/account/password',
       },
       {
-        path: '/form/domain',
-        title: '域名转发',
-        isTab: true, // 是否在tab中显示
-        children: Tabs([
-          {
-            path: '/form/domain/global',
-            title: '全局域名',
-            element: About,
-            auth: 'allAuth',
-            hidden: true, // 是否在菜单中隐藏
-          },
-          {
-            path: '/form/domain/server',
-            title: '服务域名',
-            element: About,
-            auth: 'allAuth',
-            hidden: true, // 是否在菜单中隐藏
-          },
-        ]),
+        title: '个人中心',
+        auth: 'allAuth',
+        element: AccountCenter,
+        path: '/account/center',
+        hidden: true,
       },
     ],
   },

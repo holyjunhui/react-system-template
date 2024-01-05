@@ -35,7 +35,7 @@ function MyHeader() {
     {
       key: 'accountCenter',
       label: (
-        <Link to="/system/account/center">
+        <Link to="/account/center">
           <UserOutlined style={{ marginRight: 10 }} />
           个人中心
         </Link>
@@ -105,15 +105,6 @@ function MyHeader() {
             justify-content: flex-end;
           `}
         >
-          <Badge status="processing" count={2} css={marginRight}>
-            <Link to="/system/activeAlarm">
-              <BellOutlined
-                css={css`
-                  font-size: 22px;
-                `}
-              />
-            </Link>
-          </Badge>
           <Dropdown
             css={css`
               cursor: pointer;

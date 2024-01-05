@@ -30,6 +30,7 @@ module.exports = {
     },
   },
   rules: {
+    'react/no-unstable-nested-components': 'off',
     'import/no-unresolved': 'off',
     'react-refresh/only-export-components': [
       'warn',
@@ -62,6 +63,7 @@ module.exports = {
         handlers: ['onClick', 'onMouseDown', 'onMouseUp', 'onKeyPress', 'onKeyDown', 'onKeyUp'],
       },
     ],
+    'react/jsx-props-no-spreading': 'off',
     "react/jsx-no-constructed-context-values": "off",
     "@typescript-eslint/no-explicit-any": "off",
     'react/jsx-filename-extension': ['warn', { extensions: ['.js', '.jsx', 'ts', '.tsx'] }],

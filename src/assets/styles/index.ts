@@ -21,23 +21,14 @@ const index = css`
   .customer {
     color: red;
   }
-  a {
-    color: inherit;
-    text-decoration: none;
-  }
 
   * {
     box-sizing: border-box;
   }
 
-  @media (prefers-color-scheme: dark) {
-    html {
-      color-scheme: dark;
-    }
-    body {
-      color: white;
-      background: black;
-    }
+  .whiteBg {
+    background: #fff;
+    padding: 24px;
   }
 `
 

@@ -94,7 +94,7 @@ const Index = () => {
           position: relative;
           margin-left: ${collapsed ? '80px' : '200px'};
           flex: auto;
-          height: 100vh;
+          min-height: 100vh;
 
           transition: all 0.2s;
         `}
@@ -125,9 +125,7 @@ const Index = () => {
 
         <div
           css={css`
-            background: #fff;
             margin: 20px;
-            padding: 14px 20px;
           `}
         >
           <AuthRoute authRouterList={flatRouterList} />
