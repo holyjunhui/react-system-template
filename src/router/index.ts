@@ -12,9 +12,10 @@ import {
   CertDetail,
   AccountList,
   AccountCenter,
-  Password,
-  CertRevoke,
-  CertDown,
+  DDosManage,
+  Accelerate,
+  AccessDomain,
+  AccessPort,
 } from './components'
 import Tabs from '@/components/Tabs'
 import { MenuProps } from './index.interface'
@@ -34,69 +35,43 @@ const basicRouterList: MenuProps[] = [
 ]
 const authRouterList: MenuProps[] = [
   {
-    path: '/website',
-    title: '网站管理',
-    element: Website,
+    path: '/instance',
+    title: '实例管理',
+
     icon: createElement(MenuUnfoldOutlined),
     auth: 'allAuth',
     hidden: false, // 是否在菜单中隐藏
-  },
-  {
-    title: '证书管理',
-    icon: createElement(MenuUnfoldOutlined),
-    path: '/cert-manage',
     children: [
       {
-        title: '证书申请',
+        path: '/instance/ddos',
+        title: 'DDos防护',
+        element: DDosManage,
         auth: 'allAuth',
-        path: '/cert-manage/apply',
-        element: CertApply,
       },
       {
-        title: '证书列表',
+        path: '/instance/accelerate',
+        title: '加速管理',
+        element: Accelerate,
         auth: 'allAuth',
-        path: '/cert-manage/list',
-        element: CertList,
-        children: [
-          {
-            title: '证书详情',
-            auth: 'dns.dns_auth.authRecord',
-            path: '/cert-manage/list/detail',
-            hidden: true,
-            element: CertDetail,
-          },
-        ],
       },
-
+    ],
+  },
+  {
+    title: '接入管理',
+    icon: createElement(MenuUnfoldOutlined),
+    path: '/access',
+    children: [
       {
-        title: '证书吊销',
+        path: '/access/domain',
+        title: '域名接入',
+        element: AccessDomain,
         auth: 'allAuth',
-        path: '/cert-manage/revoke',
-        element: CertList,
-        children: [
-          {
-            title: '证书详情',
-            auth: 'dns.dns_auth.authRecord',
-            path: '/cert-manage/revoke/detail',
-            hidden: true,
-            element: CertDetail,
-          },
-        ],
       },
       {
-        title: '证书下载',
+        path: '/access/port',
+        title: '端口接入',
+        element: AccessPort,
         auth: 'allAuth',
-        path: '/cert-manage/down',
-        element: CertList,
-        children: [
-          {
-            title: '证书详情',
-            auth: 'dns.dns_auth.authRecord',
-            path: '/cert-manage/down/detail',
-            hidden: true,
-            element: CertDetail,
-          },
-        ],
       },
     ],
   },

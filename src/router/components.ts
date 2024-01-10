@@ -11,6 +11,11 @@ const AccountList = lazy(() => import('@/pages/accountManage/accountList/account
 const AccountCenter = lazy(() => import('@/pages/accountManage/accountCenter'))
 const Password = lazy(() => import('@/pages/accountManage/password/password'))
 
+const DDosManage = lazy(() => import('@/pages/instanceManage/DDosManage/DDosManage'))
+const Accelerate = lazy(() => import('@/pages/instanceManage/accelerate/accelerate'))
+
+const AccessDomain = lazy(() => import('@/pages/accessManage/accessDomain/domainList'))
+const AccessPort = lazy(() => import('@/pages/accessManage/accessPort/portList'))
 export {
   Website,
   Home,
@@ -22,4 +27,8 @@ export {
   AccountCenter,
   Password,
   CertRevoke,
+  DDosManage,
+  Accelerate,
+  AccessDomain,
+  AccessPort,
 }
