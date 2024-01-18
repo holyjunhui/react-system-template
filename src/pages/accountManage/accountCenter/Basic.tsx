@@ -1,40 +1,31 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { Button, Form, Input, message } from 'antd'
-// import { useTranslation } from 'react-i18next'
 import { User } from '@/newApi/User'
-// import { HandlerProfileReq } from '@/newApi/data-contracts'
+import useGlobalStore from '@/store/user'
 
-const tailLayout = {
-  wrapperCol: {
-    xs: { span: 24, offset: 0 },
-    sm: { span: 10, offset: 4 },
-  },
-}
 const BasicSetting = () => {
-  // const { t } = useTranslation()
   const [form] = Form.useForm()
 
   const [loading, setLoading] = useState(false)
   const UserApi = useMemo(() => new User(), [])
 
   const getProfile = useCallback(() => {
-    // UserApi.profileList().then((res: any) => {
-    //   form.setFieldsValue(res.account)
-    // })
-  }, [])
+    UserApi.profileList().then((res: any) => {
+      form.setFieldsValue(res.account)
+    })
+  }, [UserApi, form])
 
   const onFinish = async (values: any) => {
     setLoading(true)
     const params = { account: { ...values } }
-    // UserApi.profileUpdate(params)
-    //   .then(() => {
-    //     message.success('保存成功')
-    //     localStorage.setItem('nickname', values.name)
-    //     window.location.reload()
-    //   })
-    //   .finally(() => {
-    //     setLoading(false)
-    //   })
+    UserApi.profileUpdate(params)
+      .then(() => {
+        message.success('保存成功')
+        useGlobalStore.setState({ name: values.name })
+      })
+      .finally(() => {
+        setLoading(false)
+      })
   }
 
   useEffect(() => {

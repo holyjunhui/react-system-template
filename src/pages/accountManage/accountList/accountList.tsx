@@ -1,17 +1,17 @@
-import React, { useContext, useCallback, useState, useMemo, useEffect } from 'react'
-import { Table, Button, Select, Form, Input, Row, Col, App, Switch, Space } from 'antd'
-import type { ColumnsType } from 'antd/es/table'
+import React, { useCallback, useState, useMemo, useEffect } from 'react'
+import { Table, Button, Select, Form, Input, Row, Col, App, Space } from 'antd'
 
 import { DownOutlined, PlusOutlined, UpOutlined } from '@ant-design/icons'
-// import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { css } from '@emotion/react'
+import { Accounts } from '@/newApi/Accounts'
 import AccountModal from './accountModal'
+import { INIT_PAGINATION } from '@/utils/commonConst'
 
 // import { Accounts } from '@/newApi/Accounts'
 // import utils from '@/utils/utils'
 // import meta from '@/utils/meta'
-// import useGlobalStore from '@/store/globalStore'
+import useGlobalStore from '@/store/user'
 
 const SYSTEMID = 1 // 系统账号id
 const AccountList = (): JSX.Element => {
@@ -28,56 +28,38 @@ const AccountList = (): JSX.Element => {
                 `)
 
   const Navigate = useNavigate()
-  // const userInfo = useGlobalStore((state) => state.userInfo)
-  // const setUserInfo = useGlobalStore((state) => state.setUserInfo)
   const { message, modal } = App.useApp()
-  const [expand, setExpand] = useState(false)
-  const handleExpand = () => {
-    setExpand(!expand)
-  }
-  // const AccountsApi = useMemo(() => new Accounts(), [])
   const [form] = Form.useForm()
-  // const { t } = useTranslation()
-  // state
-  // const { state, dispatch } = useContext(StoreContext)
+  const [expand, setExpand] = useState(false)
+  const AccountsApi = useMemo(() => new Accounts(), [])
+  const setUserInfo = useGlobalStore((state) => state.setUserInfo)
   const [visible, setVisible] = useState<boolean>(false)
   const [type, setType] = useState<'add' | 'update' | 'reset'>('add')
   const InitParams = {
     keyword: '',
   }
-  const [data, setData] = useState([
-    {
-      id: '',
-      name: '',
-      login: '',
-      email: '',
-      phone: '',
-      comment: '',
-      status: '',
-      type: '',
-      role: '',
-    },
-  ])
+  const [data, setData] = useState({})
+  const [dataSource, setDataSource] = useState<{ id: number }[]>([])
   const [params, setParams] = useState<{ keyword?: string; enabled?: boolean }>(InitParams)
   const [loading, setLoading] = useState(false)
-  const [pagination, setPagination] = useState({})
+  const [pagination, setPagination] = useState(INIT_PAGINATION)
 
+  const handleExpand = () => {
+    setExpand(!expand)
+  }
   const getTable = useCallback(() => {
-    // AccountsApi.accountsList({
-    //   ...params,
-    //   page_number: pagination.page,
-    //   page_size: pagination.pageSize,
-    // })
-    //   .then((res: any) => {
-    //     dispatch({
-    //       type: 'GET_DATA',
-    //       payload: { data: res.items, total: res.total },
-    //     })
-    //   })
-    //   .finally(() => {
-    //     setLoading(false)
-    //   })
-  }, [])
+    AccountsApi.accountsList({
+      ...params,
+      page_number: pagination.page,
+      page_size: pagination.pageSize,
+    })
+      .then((res: any) => {
+        setDataSource(res.items)
+      })
+      .finally(() => {
+        setLoading(false)
+      })
+  }, [AccountsApi, pagination.page, pagination.pageSize, params])
   const onFill = () => {
     form.setFieldsValue({
       url: 'https://taobao.com/',
@@ -93,9 +75,9 @@ const AccountList = (): JSX.Element => {
       title: '确认删除',
       content: '删除确认',
       onOk: () => {
-        return new Promise<void>((resolve, reject) => {
+        return new Promise<void>(async (resolve, reject) => {
           try {
-            // await AccountsApi.accountsDelete(id)
+            await AccountsApi.accountsDelete(id)
 
             message.success('删除成功')
             getTable()
@@ -113,11 +95,12 @@ const AccountList = (): JSX.Element => {
       title: '切换账号',
       content: '确认切换',
       onOk: () => {
-        return new Promise<void>((resolve, reject) => {
+        return new Promise<void>(async (resolve, reject) => {
           try {
-            // const res: any = await AccountsApi.impersonateCreate(id)
-            // localStorage.setItem('token', )
-            // setUserInfo(res.account)
+            const res: any = await AccountsApi.impersonateCreate(id)
+            localStorage.setItem('token', res.token)
+            setUserInfo(res.account)
+            useGlobalStore.setState({ name: res?.account?.name })
             message.success('切换成功')
             getTable()
             Navigate('/dashboard')
@@ -366,7 +349,7 @@ const AccountList = (): JSX.Element => {
           }}
           columns={columns}
           loading={loading}
-          dataSource={data}
+          dataSource={dataSource}
           rowKey={(row) => row.id}
         />
       </div>

@@ -1,12 +1,12 @@
 import React, { useState, useMemo, useEffect, useCallback } from 'react'
-import { Modal, Form, Input, Select, Radio, message, Spin, App } from 'antd'
+import { Modal, Form, Input, Select, Radio, Spin, App } from 'antd'
 // import { useTranslation } from 'react-i18next'
 
 // import { Data } from '../accountManage.store'
 // import utils from '@/utils/utils'
-// import { Accounts } from '@/newApi/Accounts'
+import { Accounts } from '@/newApi/Accounts'
 
-// import meta from '@/utils/meta'
+import meta from '@/utils/meta'
 
 interface IProps {
   data: any
@@ -16,9 +16,9 @@ interface IProps {
   cancel: () => void
 }
 const AccountManage = ({ data, type, ok, visible, cancel }: IProps): JSX.Element => {
-  // const AccountsApi = useMemo(() => new Accounts(), [])
+  const { message } = App.useApp()
+  const AccountsApi = useMemo(() => new Accounts(), [])
 
-  // const { t } = useTranslation()
   const [form] = Form.useForm()
   const [loading, setLoading] = useState<boolean>(false)
   const [isSpin, setIsSpin] = useState<boolean>(type === 'update')
@@ -36,14 +36,14 @@ const AccountManage = ({ data, type, ok, visible, cancel }: IProps): JSX.Element
     [form]
   )
 
-  // useEffect(() => {
-  //   if (type === 'update') {
-  //     AccountsApi.accountsDetail(data.id).then((res) => {
-  //       form.setFieldsValue(res)
-  //       setIsSpin(false)
-  //     })
-  //   }
-  // }, [AccountsApi, data, form, type])
+  useEffect(() => {
+    if (type === 'update') {
+      AccountsApi.accountsDetail(data.id).then((res) => {
+        form.setFieldsValue(res)
+        setIsSpin(false)
+      })
+    }
+  }, [AccountsApi, data, form, type])
   return (
     <Modal
       title={type === 'add' ? '新增' : '修改'}
@@ -74,41 +74,41 @@ const AccountManage = ({ data, type, ok, visible, cancel }: IProps): JSX.Element
             if (type === 'add') {
               const data = { ...v }
 
-              // AccountsApi.accountsCreate(data)
-              //   .then(() => {
-              //     setLoading(false)
-              //     message.success('添加成功')
-              //     ok()
-              //   })
-              //   .catch(() => {
-              //     setLoading(false)
-              //   })
+              AccountsApi.accountsCreate(data)
+                .then(() => {
+                  setLoading(false)
+                  message.success('添加成功')
+                  ok()
+                })
+                .catch(() => {
+                  setLoading(false)
+                })
             }
             if (type === 'update') {
               const formData = { ...v }
 
-              // AccountsApi.accountsUpdate(data.id, formData)
-              //   .then(() => {
-              //     setLoading(false)
-              //     message.success('修改成功')
-              //     ok()
-              //   })
-              //   .catch(() => {
-              //     setLoading(false)
-              //   })
+              AccountsApi.accountsUpdate(data.id, formData)
+                .then(() => {
+                  setLoading(false)
+                  message.success('修改成功')
+                  ok()
+                })
+                .catch(() => {
+                  setLoading(false)
+                })
             }
             if (type === 'reset') {
               const formData = { ...v }
-              // AccountsApi.passwordUpdate(data.id, formData)
-              //   .then(() => {
-              //     setLoading(false)
-              //     message.success('修改成功')
-              //     ok()
-              //     // logout()
-              //   })
-              //   .catch(() => {
-              //     setLoading(false)
-              //   })
+              AccountsApi.passwordUpdate(data.id, formData)
+                .then(() => {
+                  setLoading(false)
+                  message.success('修改成功')
+                  ok()
+                  // logout()
+                })
+                .catch(() => {
+                  setLoading(false)
+                })
             }
           }}
         >
@@ -141,9 +141,6 @@ const AccountManage = ({ data, type, ok, visible, cancel }: IProps): JSX.Element
                     required: true,
                     message: '请输入登录用户名',
                   },
-                  {
-                    // ...utils.checkNameChinese(),
-                  },
                 ]}
               >
                 <Input placeholder="请输入登录用户名" disabled={type === 'update'} allowClear />
@@ -157,10 +154,7 @@ const AccountManage = ({ data, type, ok, visible, cancel }: IProps): JSX.Element
                     validator: (_, v) => {
                       if (!v) return Promise.reject('请输入邮箱')
 
-                      // if (utils.checkEmail(v)) {
-                      //   return Promise.resolve()
-                      // }
-                      return Promise.reject('邮箱格式不正确')
+                      return Promise.resolve()
                     },
                   },
                 ]}
@@ -179,7 +173,7 @@ const AccountManage = ({ data, type, ok, visible, cancel }: IProps): JSX.Element
                       // if (utils.checkPhone(v)) {
                       //   return Promise.resolve()
                       // }
-                      return Promise.reject('手机号码格式不正确')
+                      return Promise.resolve()
                     },
                   },
                 ]}
@@ -243,11 +237,11 @@ const AccountManage = ({ data, type, ok, visible, cancel }: IProps): JSX.Element
                 ]}
               >
                 <Select allowClear placeholder="请选择角色">
-                  {/* {meta.roleList.map((item: any) => (
+                  {meta.roleList.map((item: any) => (
                     <Select.Option key={item.key} value={item.key}>
                       {item.name}
                     </Select.Option>
-                  ))} */}
+                  ))}
                 </Select>
               </Form.Item>
               <Form.Item

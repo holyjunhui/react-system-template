@@ -74,7 +74,7 @@ export class HttpClient<SecurityDataType = unknown> {
     format,
     ...axiosConfig
   }: ApiConfig<SecurityDataType> = {}) {
-    this.instance = axios.create({ ...axiosConfig, baseURL: axiosConfig.baseURL || '/api' })
+    this.instance = axios.create({ ...axiosConfig, baseURL: axiosConfig.baseURL || '/api/v1' })
     this.secure = secure
     this.format = format
     this.securityWorker = securityWorker

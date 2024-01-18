@@ -1,9 +1,8 @@
 import React from 'react'
 import { css } from '@emotion/react'
 
-import { Avatar, Badge, Button, Dropdown, Layout } from 'antd'
+import { Avatar, Button, Dropdown, Layout } from 'antd'
 import {
-  BellOutlined,
   LogoutOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
@@ -12,6 +11,7 @@ import {
 import type { MenuProps } from 'antd'
 
 import { Link } from 'react-router-dom'
+import { User } from '@/newApi/User'
 import useUserStore from '@/store/user'
 
 const { Header } = Layout
@@ -19,15 +19,19 @@ const marginRight = css`
   margin-right: 15px;
 `
 function MyHeader() {
+  const UserApi = React.useMemo(() => new User(), [])
+
   const collapsed = useUserStore((state) => state.collapsed)
   const setCollapsed = useUserStore((state) => state.setCollapsed)
+  const name = useUserStore((state) => state.name)
 
   const colorBgContainer = '#fff'
-  const nickname = 'admin3afdafasfasdfgdgdfadfasdfs'
   const handleOnUserMenuClock: MenuProps['onClick'] = (e) => {
     if (e.key === 'logout') {
-      localStorage.removeItem('token')
-      window.location.href = '/login'
+      UserApi.logoutCreate().then(() => {
+        localStorage.removeItem('token')
+        window.location.href = '/login'
+      })
     }
   }
 
@@ -117,13 +121,13 @@ function MyHeader() {
             menu={{ items, onClick: handleOnUserMenuClock }}
             arrow
           >
-            <span title={nickname}>
+            <span title={name}>
               <Avatar
                 css={marginRight}
                 style={{ backgroundColor: '#87d068' }}
                 icon={<UserOutlined />}
               />
-              {nickname}
+              {name}
             </span>
           </Dropdown>
         </div>

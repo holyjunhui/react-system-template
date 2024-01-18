@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Button, Input, Space, Switch, Table, Badge, Dropdown, Typography } from 'antd'
 import { css } from '@emotion/react'
 import {
@@ -11,6 +11,7 @@ import type { TableColumnsType } from 'antd'
 import DomainModal from './domainModal.tsx'
 import ActionButton from '@/components/ActionButton/actionButton'
 import SourceModal from '../components/sourceModal.tsx'
+import { Rule } from '@/newApi/Rule'
 
 const { Paragraph } = Typography
 
@@ -20,20 +21,24 @@ interface DataType {
   upgradeNum: number
 }
 
-interface ExpandedDataType {
-  key: React.Key
-  name: string
-  keyText: string
-}
-
 const DomainList = () => {
+  const RuleApi = React.useMemo(() => new Rule(), [])
+
   const [loading, setLoading] = useState(false)
   const [visible, setVisible] = useState<boolean>(false)
   const [sourceVisible, setSourceVisible] = useState<boolean>(false)
+  const [dataSource, setDataSource] = useState<{ id: number }[]>([])
 
   const [type, setType] = useState<'add' | 'update' | 'reset'>('add')
   const [data, setData] = useState({})
-  const getTable = useCallback(() => {}, [])
+  const getTable = useCallback(() => {
+    setLoading(true)
+    RuleApi.getRule().then((res: any) => {
+      console.log(res)
+      setDataSource(res.items)
+      setLoading(false)
+    })
+  }, [RuleApi])
 
   const actionButton = (record: any) => [
     {
@@ -62,20 +67,8 @@ const DomainList = () => {
       },
     },
   ]
-  const items = [
-    { key: '1', label: 'Action 1' },
-    { key: '2', label: 'Action 2' },
-  ]
-  const dataSource: DataType[] = []
-  for (let i = 0; i < 3; ++i) {
-    dataSource.push({
-      key: i.toString(),
-      name: 'Screen',
-      upgradeNum: 500,
-    })
-  }
 
-  const columns: TableColumnsType<DataType> = [
+  const columns: TableColumnsType<any> = [
     { title: '实例码', dataIndex: 'code', key: 'code' },
     {
       title: '实例情况',
@@ -174,6 +167,10 @@ const DomainList = () => {
       ),
     },
   ]
+
+  useEffect(() => {
+    getTable()
+  }, [getTable])
 
   return (
     <div>

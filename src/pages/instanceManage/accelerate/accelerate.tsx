@@ -1,12 +1,7 @@
 import React, { useCallback, useState } from 'react'
-import { Button, Input, Space, Switch, Table, Badge, Dropdown, Typography } from 'antd'
+import { Button, Input, Table, Typography } from 'antd'
 import { css } from '@emotion/react'
-import {
-  CaretDownOutlined,
-  CaretRightOutlined,
-  DownOutlined,
-  PlusSquareOutlined,
-} from '@ant-design/icons'
+import { PlusSquareOutlined } from '@ant-design/icons'
 import type { TableColumnsType } from 'antd'
 import InstanceModal from '../components/modal.tsx'
 import ActionButton from '@/components/ActionButton/actionButton'

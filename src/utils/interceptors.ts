@@ -19,7 +19,7 @@ export const paramsSerializer = (params: any) => {
 export const requestResolve = (config: any) => {
   const token = localStorage.getItem('token')
   if (token) {
-    config.headers.Authorization = `token ${token}`
+    config.headers.Authorization = `Bearer ${token}`
   }
   return config
 }

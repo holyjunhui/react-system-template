@@ -56,6 +56,7 @@ module.exports = {
       "controlComponents": ["CustomInput"],
       "depth": 3,
     }],
+    'no-async-promise-executor': 'off',
     'jsx-a11y/click-events-have-key-events': 'off',
     'jsx-a11y/no-noninteractive-element-interactions': [
       'error',

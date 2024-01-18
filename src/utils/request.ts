@@ -30,7 +30,7 @@ request.interceptors.request.use(
     // 一般会请求拦截里面加token，用于后端的验证
     const token = localStorage.getItem('token') as string
     if (token) {
-      config.headers!.Authorization = `token ${token}`
+      config.headers!.Authorization = `Bearer ${token}`
     }
 
     return config
@@ -45,7 +45,6 @@ request.interceptors.response.use(
   (response) => {
     // const { status } = response
     const { data } = response.data
-    console.log('response:', response)
     if (response.status === 200) {
       return data
     }

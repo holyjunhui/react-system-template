@@ -8,7 +8,6 @@ import LeftLogo from '@/assets/svg/left_top_logo.svg?react'
 import backgroundImage from '@/assets/images/login-back.jpg'
 
 import useUserStore from '@/store/user'
-import { encrypt } from '@/utils/encrypt'
 import { User } from '@/newApi/User'
 
 const Login = () => {
@@ -17,42 +16,33 @@ const Login = () => {
   const navigate = useNavigate()
   const fetchUserInfo = useUserStore((state) => state.fetchUserInfo)
 
-  const [captcha, setCaptcha] = React.useState('')
   const [loading, setLoading] = React.useState(false)
   const onFinish = async (values: any) => {
     const data = {
       ...values,
-      password: encrypt(values.password),
+      password: values.password,
     }
 
     // 去除用户名所有空格
-    data.username = data.username.replace(/\s/g, '')
+    data.login = data.login.replace(/\s/g, '')
     setLoading(true)
     try {
       const res: any = await UserApi.loginCreate(data)
-      localStorage.setItem('token', res.accessToken)
+      localStorage.setItem('token', res.token)
 
       // 先行获取，不会出现白屏，后续需要再获取
-      res.accessToken && fetchUserInfo()
+      res.token && fetchUserInfo()
       // 跳回登录前页面
+      console.log(333)
       setTimeout(() => {
-        navigate('/website')
+        navigate('/home')
       })
-    } catch (e) {
-      await fetchCaptcha() // 失败刷新验证码
+    } catch (error) {
+      console.log(error)
     } finally {
       setLoading(false)
     }
   }
-  const fetchCaptcha = useCallback(() => {
-    UserApi.captchaList().then((res) => {
-      setCaptcha(res as any)
-    })
-  }, [UserApi])
-
-  React.useEffect(() => {
-    fetchCaptcha()
-  }, [fetchCaptcha])
 
   return (
     <div>
@@ -148,38 +138,11 @@ const Login = () => {
               onFinish={onFinish}
               style={{ width: 300 }}
             >
-              <Form.Item name="username" rules={[{ required: true, message: '请输入用户名!' }]}>
+              <Form.Item name="login" rules={[{ required: true, message: '请输入用户名!' }]}>
                 <Input prefix={<UserOutlined />} placeholder="用户名" />
               </Form.Item>
               <Form.Item name="password" rules={[{ required: true, message: '请输入密码!' }]}>
                 <Input prefix={<LockOutlined />} type="password" placeholder="密码" />
-              </Form.Item>
-
-              <Form.Item>
-                <Row gutter={8}>
-                  <Col span={12}>
-                    <Form.Item
-                      name="captcha"
-                      noStyle
-                      rules={[{ required: true, message: '请输入验证码' }]}
-                    >
-                      <Input placeholder="请输入验证码" />
-                    </Form.Item>
-                  </Col>
-                  <Col span={12}>
-                    <img
-                      onClick={() => fetchCaptcha()}
-                      src={captcha}
-                      role="presentation"
-                      alt="验证码"
-                      css={css`
-                        width: 99%;
-                        height: 40.14px;
-                        cursor: pointer;
-                      `}
-                    />
-                  </Col>
-                </Row>
               </Form.Item>
 
               <Form.Item>

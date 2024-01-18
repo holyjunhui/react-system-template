@@ -14,6 +14,7 @@ import Login from '@/pages/login/login'
 import Layout from './layout/Index'
 import useUserStore from './store/user'
 import './assets/styles/tailwind.css'
+import EscapeAntd from './components/EscapeAntd'
 
 dayjs.locale('zh-cn')
 
@@ -35,7 +36,16 @@ const MainApp = () => {
         },
       }}
     >
-      <App>
+      <App
+        message={{
+          top: 100,
+          duration: 3,
+          maxCount: 1,
+        }}
+        notification={{
+          maxCount: 1,
+        }}
+      >
         {/* 全局样式 */}
         <Global styles={index} />
         <Routes>
@@ -46,6 +56,8 @@ const MainApp = () => {
 
           <Route path="*" element={<Layout />} />
         </Routes>
+        {/* 消息提示组件，用于在非组件内通过数据通信方式实现调用 */}
+        <EscapeAntd />
       </App>
     </ConfigProvider>
   )

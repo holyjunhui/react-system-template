@@ -1,22 +1,11 @@
 import React, { useState, useMemo } from 'react'
 import { Button, Form, Input, message } from 'antd'
-// import { useTranslation } from 'react-i18next'
-
-// import { hasAuth } from '@/utils/permission'
 import logout from '@/utils/logout'
 import { User } from '@/newApi/User'
 
-const tailLayout = {
-  wrapperCol: {
-    xs: { span: 24, offset: 0 },
-    sm: { span: 10, offset: 4 },
-  },
-}
 const ResetPassword = () => {
   const [form] = Form.useForm()
   const UserApi = useMemo(() => new User(), [])
-
-  // const { t } = useTranslation()
 
   const [loading, setLoading] = useState(false)
 
@@ -26,15 +15,15 @@ const ResetPassword = () => {
 
   const onFinish = (values: any) => {
     setLoading(true)
-    // UserApi.passwordUpdate(values)
-    //   .then(() => {
-    //     setLoading(false)
-    //     message.success('修改成功')
-    //     handleLogout()
-    //   })
-    //   .catch(() => {
-    //     setLoading(false)
-    //   })
+    UserApi.passwordUpdate(values)
+      .then(() => {
+        setLoading(false)
+        message.success('修改成功')
+        handleLogout()
+      })
+      .catch(() => {
+        setLoading(false)
+      })
   }
 
   return (
@@ -117,12 +106,7 @@ const ResetPassword = () => {
           />
         </Form.Item>
         <Form.Item>
-          <Button
-            type="primary"
-            // disabled={!hasAuth('system.system_user.center.write')}
-            loading={loading}
-            htmlType="submit"
-          >
+          <Button type="primary" loading={loading} htmlType="submit">
             保存
           </Button>
         </Form.Item>

@@ -21,19 +21,25 @@ import Tabs from '@/components/Tabs'
 import { MenuProps } from './index.interface'
 import About from '@/pages/about'
 import Home from '@/pages/home/home'
-import Form from '@/pages/form/form'
 import Login from '@/pages/login/login'
 
 // path必须以/开头，子路由必须以父路由开头
 const basicRouterList: MenuProps[] = [
+  // {
+  //   path: '/home',
+  //   title: '首页',
+  //   icon: createElement(MenuFoldOutlined),
+  //   // element: Home,
+  // },
+]
+const authRouterList: MenuProps[] = [
   {
     path: '/home',
     title: '首页',
     icon: createElement(MenuFoldOutlined),
+    auth: 'allAuth',
     element: Home,
   },
-]
-const authRouterList: MenuProps[] = [
   {
     path: '/instance',
     title: '实例管理',
