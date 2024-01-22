@@ -13,7 +13,9 @@ import {
   AccountList,
   AccountCenter,
   DDosManage,
+  OrderManage,
   Accelerate,
+  AuditCenter,
   AccessDomain,
   AccessPort,
 } from './components'
@@ -46,40 +48,25 @@ const authRouterList: MenuProps[] = [
 
     icon: createElement(MenuUnfoldOutlined),
     auth: 'allAuth',
+    element: DDosManage,
+
     hidden: false, // 是否在菜单中隐藏
-    children: [
-      {
-        path: '/instance/ddos',
-        title: 'DDos防护',
-        element: DDosManage,
-        auth: 'allAuth',
-      },
-      {
-        path: '/instance/accelerate',
-        title: '加速管理',
-        element: Accelerate,
-        auth: 'allAuth',
-      },
-    ],
   },
   {
-    title: '接入管理',
+    title: '审核中心',
     icon: createElement(MenuUnfoldOutlined),
-    path: '/access',
-    children: [
-      {
-        path: '/access/domain',
-        title: '域名接入',
-        element: AccessDomain,
-        auth: 'allAuth',
-      },
-      {
-        path: '/access/port',
-        title: '端口接入',
-        element: AccessPort,
-        auth: 'allAuth',
-      },
-    ],
+    path: '/audit',
+    hidden: false,
+    auth: 'allAuth',
+    element: AuditCenter,
+  },
+  {
+    title: '订单管理',
+    icon: createElement(MenuUnfoldOutlined),
+    path: '/order',
+    hidden: false,
+    auth: 'allAuth',
+    element: OrderManage,
   },
 
   {

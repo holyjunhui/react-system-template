@@ -13,6 +13,8 @@ const Password = lazy(() => import('@/pages/accountManage/password/password'))
 
 const DDosManage = lazy(() => import('@/pages/instanceManage/DDosManage/DDosManage'))
 const Accelerate = lazy(() => import('@/pages/instanceManage/accelerate/accelerate'))
+const AuditCenter = lazy(() => import('@/pages/auditCenter/auditCenter'))
+const OrderManage = lazy(() => import('@/pages/orderManage/orderManage'))
 
 const AccessDomain = lazy(() => import('@/pages/accessManage/accessDomain/domainList'))
 const AccessPort = lazy(() => import('@/pages/accessManage/accessPort/portList'))
@@ -29,6 +31,8 @@ export {
   CertRevoke,
   DDosManage,
   Accelerate,
+  AuditCenter,
+  OrderManage,
   AccessDomain,
   AccessPort,
 }
