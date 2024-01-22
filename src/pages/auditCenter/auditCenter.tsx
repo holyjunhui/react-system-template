@@ -154,7 +154,7 @@ const AuditCenter = () => {
       },
     },
     {
-      title: '实例规格',
+      title: '高防实例',
       dataIndex: 'instance',
       key: 'instance',
       render: () => {
