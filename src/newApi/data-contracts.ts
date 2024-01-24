@@ -9,6 +9,35 @@
  * ---------------------------------------------------------------
  */
 
+export enum DdoscooInstanceEdition {
+  InstanceEditionBaoxian = 'baoxian',
+  InstanceEditionWuyou = 'wuyou',
+  InstanceEditionJiasu = 'jiasu',
+  InstanceEditionAnquanJiasu = 'anquan_jiasu',
+  InstanceEditionBGP = 'bgp',
+}
+
+export enum DdoscooInstanceEipStatus {
+  InstanceEipStatusNormal = 'normal',
+  InstanceEipStatusExpired = 'expired',
+  InstanceEipStatusDefense = 'defense',
+  InstanceEipStatusBlackhole = 'blackhole',
+  InstanceEipStatusPunished = 'punished',
+}
+
+export enum DdoscooInstanceFunction {
+  InstanceFunctionDefault = 'default',
+  InstanceFunctionEnhance = 'enhance',
+  InstanceFunctionCnHk = 'cnhk',
+  InstanceFunctionCnHkDefault = 'cnhk_default',
+  InstanceFunctionCnHkEnhance = 'cnhk_enhance',
+}
+
+export enum DdoscooInstanceIpVersion {
+  InstanceIpVersionV4 = 'ipv4',
+  InstanceIpVersionV6 = 'ipv6',
+}
+
 export interface HandlerAccountCreateReq {
   /**
    * 备注信息
@@ -152,22 +181,26 @@ export interface HandlerAliAccountReq {
   username?: string
 }
 
-export interface HandlerInstanceReq {
-  /**
-   * 实例码
-   * @maxLength 64
-   */
-  code: string
+export interface HandlerInstanceCreateReq {
   /**
    * 备注信息
    * @maxLength 255
    */
   comment?: string
+  /** 客户 ID */
+  customer_id: number
   /**
-   * 自定义名称
+   * 名称（自定义名称）
    * @maxLength 128
    */
   name: string
+  /**
+   * 购买周期数/时长 (单位: 月)
+   * @min 1
+   */
+  periods: number
+  /** 实例规格 */
+  spec: ModelInstanceSpec
   /** 状态: enabled, disabled */
   status?: 'enabled' | 'disabled'
 }
@@ -185,6 +218,21 @@ export interface HandlerInstanceReviewReq {
   reason: string
   /** 审核状态: accepted, rejected */
   status: 'accepted' | 'rejected'
+}
+
+export interface HandlerInstanceUpdateReq {
+  /**
+   * 备注信息
+   * @maxLength 255
+   */
+  comment?: string
+  /**
+   * 名称（自定义名称）
+   * @maxLength 128
+   */
+  name: string
+  /** 状态: enabled, disabled */
+  status?: 'enabled' | 'disabled'
 }
 
 export interface HandlerLoginReq {
@@ -205,6 +253,43 @@ export interface HandlerLoginResp {
   account?: ModelAccount
   /** JWT token */
   token?: string
+}
+
+export interface HandlerNetworkRuleReq {
+  /**
+   * 源站端口
+   * @min 1
+   * @max 65535
+   */
+  backend_port: number
+  /**
+   * 备注
+   * @maxLength 256
+   */
+  comment?: string
+  /**
+   * 转发端口
+   * @min 1
+   * @max 65535
+   */
+  frontend_port: number
+  /**
+   * 实例
+   * @min 1
+   */
+  instance_id: number
+  /**
+   * 名称
+   * @maxLength 128
+   */
+  name: string
+  /** 转发协议 */
+  protocol: 'tcp' | 'udp'
+  /**
+   * 源站IP
+   * @minItems 1
+   */
+  real_servers: string[]
 }
 
 export interface HandlerPasswordReq {
@@ -397,44 +482,140 @@ export interface ModelApiStatus {
   /** 描述信息 */
   message?: string
   /**
-   * 操作动作
-   * c.f. ApiOperation*
-   */
-  operation?: string
-  /**
    * 操作结果
    * c.f. ApiResult*
    */
-  status?: string
+  result?: string
   /** 更新的字段列表，用于确定具体使用的阿里云 API */
   updated_fields?: string[]
+}
+
+export interface ModelBaseMenuItem {
+  id?: number
+  name?: string
+  status?: string
+}
+
+export interface ModelInstanceInfo {
+  /** 阿里实例 ID */
+  ali_instance_id?: string
+  /**
+   * 操作动作
+   * c.f. ApiOperation*
+   */
+  api_operation?: string
+  /** 同步状态 */
+  api_status?: ModelApiStatus
+  /** 创建时间 */
+  created_at?: string
+  /** 实例详情 */
+  detail?: ModelInstanceInfoDetail
+  /** EIP 详情 */
+  eips?: ModelInstanceInfoEip[]
+  id?: number
+  /** 所属实例 */
+  instance_id?: number
+  /** 规格详情 */
+  spec?: ModelInstanceInfoSpec
+  /** 使用统计情况 */
+  stats?: ModelInstanceInfoStats
+  /** 状态 (枚举类型，取值: enabled, disabled, deleted) */
+  status?: string
+  /** 更新时间 */
+  updated_at?: string
+}
+
+export interface ModelInstanceInfoDetail {
+  /** 创建时间 */
+  create_time?: string
+  /** 实例类型/版本 */
+  edition?: DdoscooInstanceEdition
+  /** 过期时间 */
+  expire_time?: string
+  /** IP 地址 */
+  ip?: string
+  /** IP 版本 */
+  ip_version?: DdoscooInstanceIpVersion
+  /** 备注 */
+  remark?: string
+}
+
+export interface ModelInstanceInfoEip {
+  /** IP 地址 */
+  address?: string
+  /** IP 状态 */
+  status?: DdoscooInstanceEipStatus
+}
+
+export interface ModelInstanceInfoSpec {
+  /** 业务正常带宽 (Mbps) */
+  bandwidth?: number
+  /** 并发连接数限制 */
+  conn_limit?: number
+  /** 新建连接数限制 */
+  cps_limit?: number
+  /** 防护基础带宽 (Gbps) */
+  defense_base_bandwidth?: number
+  /** 可用高级防护的次数 */
+  defense_count?: number
+  /** 防护弹性带宽 (Gbps) */
+  defense_elastic_bandwidth?: number
+  /** 可防护域名的数量 */
+  domain_limit?: number
+  /** 功能套餐类型 */
+  function?: DdoscooInstanceFunction
+  /** 可防护端口的数量 */
+  port_limit?: number
+  /** 业务正常 QPS */
+  qps_limit?: number
+  /** 业务实际带宽限速值 (Mbps) */
+  real_limit_bandwidth?: number
+  /** 可防护站点的数量 */
+  site_limit?: number
+}
+
+export interface ModelInstanceInfoStats {
+  /** 本月已使用的高级防护次数 */
+  defense_count_usage?: number
+  /** 已防护的域名数量 */
+  domain_usage?: number
+  /** 已防护的端口数量 */
+  port_usage?: number
+  /** 已防护的站点/网站数量 */
+  site_usage?: number
 }
 
 export interface ModelInstanceMenuItem {
   /** 实例码 */
   code?: string
+  /** 实例类型/版本 */
+  edition?: DdoscooInstanceEdition
   /** 实例 ID */
   id?: number
   /** 名称（自定义名称） */
   name?: string
-  /** 审核状态 (pending, accepted, rejected) */
-  review_status?: string
   /** 状态 (enabled, disabled) */
   status?: string
 }
 
 export interface ModelInstanceResp {
   /**
-   * 所属阿里云账号
-   * NOTE: 不可修改
+   * 阿里实例 ID
+   * NOTE: 审核通过并且开通成功才有
    */
-  ali_account_id?: number
+  ali_instance_id?: string
+  /**
+   * 操作动作
+   * c.f. ApiOperation*
+   */
+  api_operation?: string
+  /** 同步状态 */
+  api_status?: ModelApiStatus
   /** 所属渠道商 */
   channel_id?: number
   /**
    * 实例码
-   * 由售卖系统生成，唯一且不变，与实例 ID 唯一对应。
-   * NOTE: 不可修改
+   * NOTE: 自动生成，唯一且不变，与实例 ID 唯一对应。
    */
   code?: string
   /** 备注信息 */
@@ -446,8 +627,16 @@ export interface ModelInstanceResp {
   /** 客户名称 */
   customer_name?: string
   id?: number
+  instance_info?: ModelInstanceInfo
+  /**
+   * 关联的阿里云实例及其信息
+   * NOTE: 审核通过并且开通成功才有
+   */
+  instance_info_id?: number
   /** 名称（自定义名称） */
   name?: string
+  /** 购买周期数/时长 (单位: 月) */
+  periods?: number
   /** 审核信息 */
   review_info?: ModelInstanceReview
   /**
@@ -455,6 +644,8 @@ export interface ModelInstanceResp {
    * 取值: pending (审核中), accepted (通过), rejected (拒绝)
    */
   review_status?: string
+  /** 实例规格 (下单提供) */
+  spec?: ModelInstanceSpec
   /** 状态 (枚举类型，取值: enabled, disabled, deleted) */
   status?: string
   /** 更新时间 */
@@ -472,6 +663,80 @@ export interface ModelInstanceReview {
    * @maxLength 128
    */
   reason: string
+}
+
+export interface ModelInstanceSpec {
+  /**
+   * 可防护域名的数量
+   * NOTE: 必须是 10 的倍数
+   * @min 10
+   */
+  domain_count: number
+  /**
+   * 实例类型/版本
+   * 枚举类型，可选:
+   * - baoxian: 保险版
+   * - wuyou: 无忧版 (无限防护)
+   * - jiasu: 加速线路
+   */
+  edition: 'baoxian' | 'wuyou' | 'jiasu'
+  /**
+   * 功能套餐类型
+   * 枚举类型，可选:
+   * - default: 标准功能
+   * - enhance: 增强功能
+   */
+  function: 'default' | 'enhance'
+  /**
+   * 业务正常带宽 (Mbps)
+   * 枚举类型，可选: 100, 150, 200, 250, 300
+   */
+  normal_bandwidth: 100 | 150 | 200 | 250 | 300
+  /**
+   * 业务正常 QPS
+   * NOTE: 最小 1000, 以 100 为单位递增
+   * @min 1000
+   */
+  normal_qps: number
+  /**
+   * 可防护端口的数量
+   * NOTE: 必须是 5 的倍数
+   * @min 5
+   */
+  port_count: number
+}
+
+export interface ModelNetworkRule {
+  /** 阿里云接口同步状态 */
+  api_status?: ModelApiStatus
+  /** 源站端口 */
+  backend_port?: number
+  /** 所属渠道商 */
+  channel_id?: number
+  /** 备注信息 */
+  comment?: string
+  /** 创建时间 */
+  created_at?: string
+  /** 所属客户 */
+  customer_id?: number
+  /** 转发端口 */
+  frontend_port?: number
+  id?: number
+  /** 关联的实例 */
+  instance_id?: number
+  /** 规则名称 */
+  name?: string
+  /**
+   * 转发协议
+   * c.f. NetworkProtocol*
+   */
+  protocol?: string
+  /** 源站 IP 地址 */
+  real_servers?: string[]
+  /** 状态 (枚举类型，取值: enabled, disabled, deleted) */
+  status?: string
+  /** 更新时间 */
+  updated_at?: string
 }
 
 export interface ModelWebCertificate {

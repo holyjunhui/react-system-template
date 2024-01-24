@@ -10,8 +10,9 @@
  */
 
 import {
-  HandlerInstanceReq,
+  HandlerInstanceCreateReq,
   HandlerInstanceReviewReq,
+  HandlerInstanceUpdateReq,
   ModelInstanceResp,
   UtilsHTTPCreated,
   UtilsHTTPDeleted,
@@ -22,11 +23,11 @@ import { ContentType, HttpClient, RequestParams } from './http-client'
 
 export class Instances<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
   /**
-   * @description 系统账号能查看全部域名 渠道商账号能查看其客户的域名 客户账号只能查看自己的域名
+   * @description 系统账号能查看全部实例 渠道商账号能查看其客户的实例 客户账号只能查看自己的实例
    *
    * @tags instances
    * @name InstancesList
-   * @summary 查询域名列表
+   * @summary 查询实例列表
    * @request GET:/instances
    * @secure
    */
@@ -34,12 +35,14 @@ export class Instances<SecurityDataType = unknown> extends HttpClient<SecurityDa
     query?: {
       /** 状态 */
       status?: 'enabled' | 'disabled'
-      /** 阿里账号ID */
-      ali_account_id?: number
       /** 名称 */
       name?: string
       /** 实例码 */
       code?: string
+      /** 实例类型/版本 */
+      edition?: 'baoxian' | 'wuyou' | 'jiasu'
+      /** 功能套餐类型 */
+      function?: 'default' | 'enhance'
       /** 审核状态 */
       review_status?: 'pending' | 'accepted' | 'rejected'
       /**
@@ -71,15 +74,15 @@ export class Instances<SecurityDataType = unknown> extends HttpClient<SecurityDa
       ...params,
     })
   /**
-   * @description 仅供客户账号使用
+   * @description 仅供渠道商账号（运营人员）使用
    *
    * @tags instances
    * @name InstancesCreate
-   * @summary 添加实例
+   * @summary 添加（购买）实例
    * @request POST:/instances
    * @secure
    */
-  instancesCreate = (req: HandlerInstanceReq, params: RequestParams = {}) =>
+  instancesCreate = (req: HandlerInstanceCreateReq, params: RequestParams = {}) =>
     this.request<UtilsHTTPCreated, UtilsHTTPError>({
       path: `/instances`,
       method: 'POST',
@@ -95,29 +98,29 @@ export class Instances<SecurityDataType = unknown> extends HttpClient<SecurityDa
    * @tags instances
    * @name InstancesDetail
    * @summary 获取实例信息
-   * @request GET:/instances/{instanceId}
+   * @request GET:/instances/{id}
    * @secure
    */
-  instancesDetail = (instanceId: number, params: RequestParams = {}) =>
+  instancesDetail = (id: number, params: RequestParams = {}) =>
     this.request<ModelInstanceResp, UtilsHTTPError>({
-      path: `/instances/${instanceId}`,
+      path: `/instances/${id}`,
       method: 'GET',
       secure: true,
       format: 'json',
       ...params,
     })
   /**
-   * @description 仅供客户账号使用
+   * No description
    *
    * @tags instances
    * @name InstancesUpdate
    * @summary 更新实例信息
-   * @request PUT:/instances/{instanceId}
+   * @request PUT:/instances/{id}
    * @secure
    */
-  instancesUpdate = (instanceId: number, req: HandlerInstanceReq, params: RequestParams = {}) =>
+  instancesUpdate = (id: number, req: HandlerInstanceUpdateReq, params: RequestParams = {}) =>
     this.request<UtilsHTTPUpdated, UtilsHTTPError>({
-      path: `/instances/${instanceId}`,
+      path: `/instances/${id}`,
       method: 'PUT',
       body: req,
       secure: true,
@@ -126,17 +129,17 @@ export class Instances<SecurityDataType = unknown> extends HttpClient<SecurityDa
       ...params,
     })
   /**
-   * @description 仅供客户账号使用
+   * @description 仅供渠道商账号（运营人员）使用
    *
    * @tags instances
    * @name InstancesDelete
    * @summary 删除实例
-   * @request DELETE:/instances/{instanceId}
+   * @request DELETE:/instances/{id}
    * @secure
    */
-  instancesDelete = (instanceId: number, params: RequestParams = {}) =>
+  instancesDelete = (id: number, params: RequestParams = {}) =>
     this.request<UtilsHTTPDeleted, UtilsHTTPError>({
-      path: `/instances/${instanceId}`,
+      path: `/instances/${id}`,
       method: 'DELETE',
       secure: true,
       format: 'json',
@@ -148,12 +151,12 @@ export class Instances<SecurityDataType = unknown> extends HttpClient<SecurityDa
    * @tags instances
    * @name ReviewUpdate
    * @summary 运营人员审核新增实例
-   * @request PUT:/instances/{instanceId}/review
+   * @request PUT:/instances/{id}/review
    * @secure
    */
-  reviewUpdate = (instanceId: number, req: HandlerInstanceReviewReq, params: RequestParams = {}) =>
+  reviewUpdate = (id: number, req: HandlerInstanceReviewReq, params: RequestParams = {}) =>
     this.request<UtilsHTTPUpdated, UtilsHTTPError>({
-      path: `/instances/${instanceId}/review`,
+      path: `/instances/${id}/review`,
       method: 'PUT',
       body: req,
       secure: true,
@@ -162,16 +165,16 @@ export class Instances<SecurityDataType = unknown> extends HttpClient<SecurityDa
       ...params,
     })
   /**
-   * @description 仅供客户账号使用
+   * No description
    *
    * @tags instances
    * @name StatusUpdate
    * @summary 切换实例状态
-   * @request PUT:/instances/{instanceId}/status
+   * @request PUT:/instances/{id}/status
    * @secure
    */
   statusUpdate = (
-    instanceId: number,
+    id: number,
     query: {
       /** 状态 */
       status: 'enabled' | 'disabled'
@@ -179,7 +182,7 @@ export class Instances<SecurityDataType = unknown> extends HttpClient<SecurityDa
     params: RequestParams = {}
   ) =>
     this.request<UtilsHTTPUpdated, UtilsHTTPError>({
-      path: `/instances/${instanceId}/status`,
+      path: `/instances/${id}/status`,
       method: 'PUT',
       query: query,
       secure: true,

@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { Badge, Button, Col, Form, Input, Row, Select, App, Space, Table } from 'antd'
+import { App, Badge, Button, Col, Form, Input, Row, Select, Space, Table } from 'antd'
 import { css } from '@emotion/react'
 import type { TableColumnsType } from 'antd'
 import { DownOutlined, UpOutlined } from '@ant-design/icons'
-import StatusModal from './statusModal.tsx'
-import AuditCenterModal from './auditCenterModal.tsx'
+import InstanceModal from './orderModal.tsx'
 import { INIT_PAGINATION } from '@/utils/commonConst'
+import ActionButton from '@/components/ActionButton/actionButton'
 
 import { Instances } from '@/newApi/Instances'
 import { Menu } from '@/newApi/Menu'
@@ -26,11 +26,11 @@ const btnCss = css(`
                   }
                 `)
 
-const AuditCenter = () => {
+const InstanceManage = () => {
   const InstancesApi = React.useMemo(() => new Instances(), [])
   const MenuApi = React.useMemo(() => new Menu(), [])
-  const { message, modal } = App.useApp()
   const [form] = Form.useForm()
+  const { message, modal } = App.useApp()
 
   const [loading, setLoading] = useState(false)
   const [params, setParams] = useState<any>({
@@ -40,7 +40,6 @@ const AuditCenter = () => {
   // 使用自定义hooks管理页码信息
   const [pagination, setPagination, setTotal] = useSavePageStatus()
   const [visible, setVisible] = useState<boolean>(false)
-  const [statusVisible, setStatusVisible] = useState<boolean>(false)
   const [type, setType] = useState<'add' | 'update' | 'reset'>('add')
   const [expand, setExpand] = useState(false)
   const [data, setData] = useState({})
@@ -69,86 +68,6 @@ const AuditCenter = () => {
     setExpand(!expand)
   }
 
-  const handleUpdateEnabled = ({ id }: { id: number }) => {
-    modal.confirm({
-      title: '提示',
-      content: rejectForm,
-      onOk: () => {
-        return new Promise<void>(async (resolve, reject) => {
-          const values = await form.validateFields()
-
-          try {
-            await InstancesApi.reviewUpdate(id, { ...values, status: 'accepted' })
-
-            message.success('操作成功')
-            getTable()
-            resolve()
-          } catch {
-            reject()
-          }
-        })
-      },
-    })
-  }
-  const rejectForm = (
-    <Form form={form}>
-      <Form.Item
-        labelCol={{ span: 24 }}
-        wrapperCol={{ span: 24 }}
-        label="原因"
-        name="reason"
-        rules={[{ required: true, message: '请输入原因' }]}
-      >
-        <Input.TextArea placeholder="请输入原因" />
-      </Form.Item>
-    </Form>
-  )
-  const handleReject = ({ id }: { id: number }) => {
-    modal.confirm({
-      title: '提示',
-      width: 500,
-      content: rejectForm,
-      onOk: () => {
-        return new Promise<void>(async (resolve, reject) => {
-          const values = await form.validateFields()
-
-          try {
-            await InstancesApi.reviewUpdate(id, { ...values, status: 'rejected' })
-
-            message.success('操作成功')
-            getTable()
-            resolve()
-          } catch {
-            reject()
-          }
-        })
-      },
-    })
-  }
-  const handleStatus = (record: any) => {
-    setStatusVisible(true)
-    setData(record)
-  }
-  const handleClose = ({ id }: { id: number }) => {
-    modal.confirm({
-      title: '提示',
-      width: 500,
-      content: '确定要关闭该实例',
-      onOk: () => {
-        return new Promise<void>(async (resolve, reject) => {
-          try {
-            await InstancesApi.instancesDelete(id)
-
-            message.success('操作成功')
-            getTable()
-            resolve()
-          } catch {
-            reject()
-          }
-        })
-      },
-    })
-  }
   const onFill = () => {
     form.setFieldsValue({
       name: '',
@@ -162,9 +81,48 @@ const AuditCenter = () => {
     })
   }
 
+  const handleDelete = (id?: any) => {
+    modal.confirm({
+      title: '删除',
+      content: '确定删除吗？',
+      onOk: () => {
+        return new Promise<void>(async (resolve, reject) => {
+          try {
+            await InstancesApi.instancesDelete(id)
+
+            message.success('删除成功')
+            setPagination(pagination, [id])
+            getTable()
+            resolve()
+          } catch {
+            reject()
+          }
+        })
+      },
+    })
+  }
+
+  const actionButton = (record: any) => [
+    {
+      key: 'update',
+      label: '编辑',
+      method: () => {
+        setVisible(true)
+        setType('update')
+        setData(record)
+      },
+    },
+    {
+      key: 'delete',
+      label: '删除',
+      method: () => {
+        handleDelete(record.id)
+      },
+    },
+  ]
+
   const columns: TableColumnsType<any> = [
     { title: '用户名称', dataIndex: 'customer_name', key: 'customer_name' },
-
     {
       title: '实例信息',
       dataIndex: 'instance',
@@ -173,7 +131,7 @@ const AuditCenter = () => {
         return (
           <div>
             <p>实例名称：{record.name}</p>
-            <p>实例ID:{record.code}</p>
+            <p>实例ID：{record.code}</p>
           </div>
         )
       },
@@ -200,31 +158,63 @@ const AuditCenter = () => {
         return (
           <div>
             <p>防护套餐：{edition.get(record.spec?.edition)}</p>
-            <p>功能套餐：{functionMap.get(record?.spec?.function)}</p>
-            <p>正常业务带宽：{record?.spec?.normal_bandwidth}M</p>
+            {record.spec.edition !== 'jiasu' && (
+              <p>功能套餐：{functionMap.get(record?.spec?.function)}</p>
+            )}
+            {record.spec.edition !== 'jiasu' ? (
+              <p>正常业务带宽：{record?.spec?.normal_bandwidth}M</p>
+            ) : (
+              <p>加速带宽：{record?.spec?.normal_bandwidth}M</p>
+            )}
             <p>正常业务QPS：{record?.spec?.normal_qps}</p>
           </div>
         )
       },
     },
-
     {
-      title: '申请日期',
-      dataIndex: 'date',
-      key: 'date',
+      title: '独享IP',
+      dataIndex: 'ip',
+      key: 'ip',
       render: (_, record) => {
-        return utils.timeFormat(record?.instance_info?.detail?.create_time)
+        return (
+          <div>
+            {record?.instance_info?.eips?.map((item: any, index: number) => (
+              <div key={index}>
+                <p>{item?.address}</p>
+              </div>
+            ))}
+          </div>
+        )
       },
     },
     {
-      title: '最后更新日期',
+      title: '日期',
       dataIndex: 'date',
       key: 'date',
       render: (_, record) => {
-        return utils.timeFormat(record?.instance_info?.detail?.expire_time)
+        return (
+          <div>
+            <p>
+              购买时间：{utils.timeFormat(record?.instance_info?.detail?.create_time, 'YYYY-MM-DD')}
+            </p>
+            <p>到期时间：{utils.timeFormat(record?.instance_info?.detail?.expire_time)}</p>
+          </div>
+        )
       },
     },
-
+    {
+      title: '实例配置',
+      dataIndex: 'config',
+      key: 'config',
+      render: (_, record) => {
+        return (
+          <div>
+            <p>防护端口数：{record?.spec?.port_count}个</p>
+            <p>防护域名数：{record?.spec?.domain_count}个</p>
+          </div>
+        )
+      },
+    },
     {
       title: '实例状态',
       dataIndex: 'status',
@@ -271,18 +261,11 @@ const AuditCenter = () => {
     {
       title: '操作',
       key: 'operation',
-      render: (_, record) => {
-        return (
-          <div>
-            <Button type="link" onClick={() => handleUpdateEnabled(record)}>
-              同意
-            </Button>
-            <Button type="link" onClick={() => handleReject(record)}>
-              驳回
-            </Button>
-          </div>
-        )
-      },
+      render: (_, record) => (
+        <Space size="middle">
+          <ActionButton actions={actionButton(record)} />
+        </Space>
+      ),
     },
   ]
 
@@ -419,6 +402,21 @@ const AuditCenter = () => {
       margin-top: 24px;
       `)}
       >
+        <div
+          css={css(`
+        margin-bottom: 12px;`)}
+        >
+          <Button
+            type="primary"
+            onClick={() => {
+              setVisible(true)
+              setType('add')
+              setData({})
+            }}
+          >
+            添加实例
+          </Button>
+        </div>
         <Table
           loading={loading}
           columns={columns}
@@ -440,19 +438,7 @@ const AuditCenter = () => {
           size="middle"
         />
       </div>
-      <StatusModal
-        visible={statusVisible}
-        data={data}
-        type={type}
-        ok={() => {
-          getTable()
-          setVisible(false)
-        }}
-        cancel={() => {
-          setVisible(false)
-        }}
-      />
-      <AuditCenterModal
+      <InstanceModal
         visible={visible}
         data={data}
         type={type}
@@ -468,4 +454,4 @@ const AuditCenter = () => {
   )
 }
 
-export default AuditCenter
+export default InstanceManage

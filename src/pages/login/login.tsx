@@ -101,7 +101,7 @@ const Login = () => {
           text-align: left;
         `)}
             >
-              证书管理系统
+              DDos管理系统
             </div>
             <div
               css={css(`

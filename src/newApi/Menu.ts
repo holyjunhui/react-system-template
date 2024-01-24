@@ -12,6 +12,7 @@
 import {
   ModelAccountMenuItem,
   ModelAliAccountMenuItem,
+  ModelBaseMenuItem,
   ModelInstanceMenuItem,
   UtilsHTTPError,
 } from './data-contracts'
@@ -53,6 +54,23 @@ export class Menu<SecurityDataType = unknown> extends HttpClient<SecurityDataTyp
       ...params,
     })
   /**
+   * @description 仅供渠道商账号使用
+   *
+   * @tags customers
+   * @name CustomersList
+   * @summary 获取客户列表菜单
+   * @request GET:/menu/customers
+   * @secure
+   */
+  customersList = (params: RequestParams = {}) =>
+    this.request<ModelBaseMenuItem[], UtilsHTTPError>({
+      path: `/menu/customers`,
+      method: 'GET',
+      secure: true,
+      format: 'json',
+      ...params,
+    })
+  /**
    * @description 仅供客户账号使用
    *
    * @tags instances
@@ -61,10 +79,17 @@ export class Menu<SecurityDataType = unknown> extends HttpClient<SecurityDataTyp
    * @request GET:/menu/instances
    * @secure
    */
-  instancesList = (params: RequestParams = {}) =>
+  instancesList = (
+    query?: {
+      /** 实例类型/版本 */
+      editions?: ('baoxian' | 'wuyou' | 'jiasu')[]
+    },
+    params: RequestParams = {}
+  ) =>
     this.request<ModelInstanceMenuItem[], UtilsHTTPError>({
       path: `/menu/instances`,
       method: 'GET',
+      query: query,
       secure: true,
       format: 'json',
       ...params,

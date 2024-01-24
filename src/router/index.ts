@@ -1,29 +1,11 @@
 import { createElement } from 'react'
-import {
-  MenuFoldOutlined,
-  MenuUnfoldOutlined,
-  UploadOutlined,
-  UserOutlined,
-} from '@ant-design/icons'
-import {
-  Website,
-  CertApply,
-  CertList,
-  CertDetail,
-  AccountList,
-  AccountCenter,
-  DDosManage,
-  OrderManage,
-  Accelerate,
-  AuditCenter,
-  AccessDomain,
-  AccessPort,
-} from './components'
-import Tabs from '@/components/Tabs'
+import { MenuFoldOutlined, MenuUnfoldOutlined, UserOutlined } from '@ant-design/icons'
+import { AccountList, InstanceManage, AccountCenter, AuditCenter } from './components'
 import { MenuProps } from './index.interface'
 import About from '@/pages/about'
 import Home from '@/pages/home/home'
 import Login from '@/pages/login/login'
+import LiFang from '@/assets/svg/lifang.svg?react'
 
 // path必须以/开头，子路由必须以父路由开头
 const basicRouterList: MenuProps[] = [
@@ -46,9 +28,9 @@ const authRouterList: MenuProps[] = [
     path: '/instance',
     title: '实例管理',
 
-    icon: createElement(MenuUnfoldOutlined),
+    icon: createElement(LiFang),
     auth: 'allAuth',
-    element: DDosManage,
+    element: InstanceManage,
 
     hidden: false, // 是否在菜单中隐藏
   },
@@ -59,14 +41,6 @@ const authRouterList: MenuProps[] = [
     hidden: false,
     auth: 'allAuth',
     element: AuditCenter,
-  },
-  {
-    title: '订单管理',
-    icon: createElement(MenuUnfoldOutlined),
-    path: '/order',
-    hidden: false,
-    auth: 'allAuth',
-    element: OrderManage,
   },
 
   {

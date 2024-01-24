@@ -1,7 +1,7 @@
 const siderLayoutBg = '#212933'
 const siderFirstBg = '#191F26'
 
-const siderSelectedBg = '#00AB7A'
+const siderSelectedBg = '#3F7BFF'
 const siderSelectedColor = '#fff'
 const siderSubmenuBg = 'blue'
 const neutralColor = '#D8DDE6'
